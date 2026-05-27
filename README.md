@@ -8,7 +8,7 @@ Automatically punches in/out on PeopleStrong HRMS at scheduled times on macOS.
 
 | File | Purpose |
 |------|---------|
-| `config.py` | **Your settings** — URL, credentials, timings |
+| `config.py` | **Your settings** — URL and punch timings |
 | `timesheet_bot.py` | Playwright automation script |
 | `install.sh` | One-time dependency installer |
 | `setup_cron.sh` | Installs cron jobs from your config |
@@ -27,18 +27,16 @@ bash install.sh
 Open `config.py` and fill in:
 ```python
 PEOPLESTRONG_URL = "https://yourcompany.peoplestrong.com"
-USERNAME         = "your.email@company.com"
-PASSWORD         = "your_password"
 PUNCH_IN_TIME    = "09:00"   # 24-hr format
 PUNCH_OUT_TIME   = "18:00"
 HEADLESS         = False     # set True once tested
 ```
 
-### 3. Test login
+### 3. Save your session (do this once)
 ```bash
-python3 timesheet_bot.py test_login
+python3 timesheet_bot.py save_session
 ```
-A browser window will open — watch it log in. If it fails, check your URL/credentials.
+A browser window will open. Log in manually (including any OTP/MFA). Press Enter in the terminal when done — your session is saved to `ps_profile/` and reused for all future runs.
 
 ### 4. Test punch in
 ```bash
@@ -61,9 +59,10 @@ bash setup_cron.sh
 ## Manual usage
 
 ```bash
+python3 timesheet_bot.py save_session   # once — saves your login to ps_profile/
 python3 timesheet_bot.py punch_in
 python3 timesheet_bot.py punch_out
-python3 timesheet_bot.py test_login
+python3 timesheet_bot.py test_login    # verify saved session is still valid
 ```
 
 ---
@@ -89,7 +88,7 @@ PeopleStrong's UI labels differ by company config. To find the right selector:
 6. Open `timesheet_bot.py`, find `_click_punch_button()`, and add your selector to the `candidates` list
 
 ### Two-factor authentication (OTP)
-If your company requires OTP, set `HEADLESS = False` — the browser will open and wait for you to enter the OTP manually before continuing.
+OTP/MFA is handled during `save_session` — the browser opens and waits for you to complete login including any OTP before saving the session. Subsequent `punch_in`/`punch_out` runs use the saved session and don't require OTP.
 
 ### cron not running
 - Check logs: `cat /tmp/peoplestrong_bot.log`
