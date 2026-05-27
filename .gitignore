@@ -1,0 +1,31 @@
+# Browser profiles (contain login sessions / cookies — never commit)
+ps_profile/
+wa_profile/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+
+# Internal
+.sixth/
